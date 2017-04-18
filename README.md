@@ -1,0 +1,2 @@
+# RecyclerCoverFlow
+使用RecyclerView，自定义LayoutManager实现旋转木马相册效果
