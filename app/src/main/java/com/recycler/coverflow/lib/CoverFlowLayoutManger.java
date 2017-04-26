@@ -71,6 +71,16 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
      */
     private OnSelected mSelectedListener;
 
+    /**是否为平面滚动，Item之间没有叠加，也没有缩放*/
+    private boolean mIsFlatFlow = false;
+
+    public CoverFlowLayoutManger(boolean isFlat) {
+        mIsFlatFlow = isFlat;
+        if (mIsFlatFlow) {
+            mIntervalRatio = 1.1f;
+        }
+    }
+
     @Override
     public RecyclerView.LayoutParams generateDefaultLayoutParams() {
         return new RecyclerView.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -160,9 +170,9 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
                     !mHasAttachedItems.get(i)) { //重新加载可见范围内的Item
                 View scrap = recycler.getViewForPosition(i);
                 measureChildWithMargins(scrap, 0, 0);
-                if (scrollDirection == SCROLL_LEFT) { //向右滚动，新增的Item需要添加在最前面
+                if (scrollDirection == SCROLL_LEFT || mIsFlatFlow) { //向左滚动，新增的Item需要添加在最前面
                     addView(scrap, 0);
-                } else { //向左滚动，新增的item要添加在最后面
+                } else { //向右滚动，新增的item要添加在最后面
                     addView(scrap);
                 }
                 layoutItem(scrap, mAllItemFrames.get(i)); //将这个Item布局出来
@@ -182,8 +192,10 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
                 frame.top,
                 frame.right - mOffsetAll,
                 frame.bottom);
-        child.setScaleX(computeScale(frame.left - mOffsetAll)); //缩放
-        child.setScaleY(computeScale(frame.left - mOffsetAll)); //缩放
+        if (!mIsFlatFlow) { //不是平面普通滚动的情况下才进行缩放
+            child.setScaleX(computeScale(frame.left - mOffsetAll)); //缩放
+            child.setScaleY(computeScale(frame.left - mOffsetAll)); //缩放
+        }
     }
 
     @Override

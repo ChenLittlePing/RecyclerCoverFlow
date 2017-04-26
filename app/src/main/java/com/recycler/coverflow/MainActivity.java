@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initList() {
         mList = (RecyclerCoverFlow) findViewById(R.id.list);
+        mList.setFlatFlow(true); //平面滚动
         mList.setAdapter(new Adapter(this));
         mList.setOnItemSelectedListener(new CoverFlowLayoutManger.OnSelected() {
             @Override

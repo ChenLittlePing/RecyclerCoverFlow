@@ -17,23 +17,31 @@ public class RecyclerCoverFlow extends RecyclerView {
 
     public RecyclerCoverFlow(Context context) {
         super(context);
-        init();
+        init(false);
     }
 
     public RecyclerCoverFlow(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(false);
     }
 
     public RecyclerCoverFlow(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init();
+        init(false);
     }
 
-    private void init() {
-        setLayoutManager(new CoverFlowLayoutManger());
+    private void init(boolean isFlat) {
+        setLayoutManager(new CoverFlowLayoutManger(isFlat));
         setChildrenDrawingOrderEnabled(true); //开启重新排序
         setOverScrollMode(OVER_SCROLL_NEVER);
+    }
+
+    /**
+     * 设置是否为普通平面滚动
+     * @param isFlat true:平面滚动；false:叠加缩放滚动
+     */
+    public void setFlatFlow(boolean isFlat) {
+        init(isFlat);
     }
 
     @Override
