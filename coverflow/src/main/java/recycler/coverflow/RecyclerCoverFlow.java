@@ -1,4 +1,4 @@
-package com.recycler.coverflow.lib;
+package recycler.coverflow;
 
 import android.content.Context;
 import android.support.annotation.Nullable;

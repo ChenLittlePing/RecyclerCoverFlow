@@ -4,8 +4,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
-import com.recycler.coverflow.lib.CoverFlowLayoutManger;
-import com.recycler.coverflow.lib.RecyclerCoverFlow;
+import recycler.coverflow.CoverFlowLayoutManger;
+import recycler.coverflow.RecyclerCoverFlow;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initList() {
         mList = (RecyclerCoverFlow) findViewById(R.id.list);
-        mList.setFlatFlow(true); //平面滚动
+//        mList.setFlatFlow(true); //平面滚动
         mList.setAdapter(new Adapter(this));
         mList.setOnItemSelectedListener(new CoverFlowLayoutManger.OnSelected() {
             @Override

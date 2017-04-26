@@ -1,4 +1,4 @@
-package com.recycler.coverflow.lib;
+package recycler.coverflow;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;

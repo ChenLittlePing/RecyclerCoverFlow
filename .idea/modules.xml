@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/RecyclerCoverFlow.iml" filepath="$PROJECT_DIR$/RecyclerCoverFlow.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/coverflow/coverflow.iml" filepath="$PROJECT_DIR$/coverflow/coverflow.iml" />
     </modules>
   </component>
 </project>

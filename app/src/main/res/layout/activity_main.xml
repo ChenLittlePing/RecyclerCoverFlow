@@ -13,11 +13,11 @@
         android:text="0"
         android:textColor="@android:color/black"/>
 
-    <com.recycler.coverflow.lib.RecyclerCoverFlow
+    <recycler.coverflow.RecyclerCoverFlow
         android:id="@+id/list"
         android:layout_marginTop="50dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </com.recycler.coverflow.lib.RecyclerCoverFlow>
+    </recycler.coverflow.RecyclerCoverFlow>
 </android.support.constraint.ConstraintLayout>
