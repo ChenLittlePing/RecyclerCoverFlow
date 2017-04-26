@@ -60,6 +60,9 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
     /**正显示在中间的Item*/
     private int mSelectPosition = 0;
 
+    /**前一个正显示在中间的Item*/
+    private int mLastSelectPosition = 0;
+
     /**滑动的方向：左*/
     private static int SCROLL_LEFT = 1;
 
@@ -88,8 +91,6 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
 
     @Override
     public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
-        mRecycle = recycler;
-        mState = state;
         //如果没有item，直接返回
         //跳过preLayout，preLayout主要用于支持动画
         if (getItemCount() <= 0 || state.isPreLayout()) {
@@ -121,9 +122,16 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
         }
 
         detachAndScrapAttachedViews(recycler); //在布局之前，将所有的子View先Detach掉，放入到Scrap缓存中
+        if ((mRecycle == null || mState == null) && //在为初始化前调用smoothScrollToPosition 或者 scrollToPosition,只会记录位置
+                mSelectPosition != 0) {                 //所以初始化时需要滚动到对应位置
+            mOffsetAll = (int) calculateOffsetForPosition(mSelectPosition);
+            onSelectedCallBack();
+        }
+
         layoutItems(recycler, state, SCROLL_RIGHT);
 
-        onSelectedCallBack();
+        mRecycle = recycler;
+        mState = state;
     }
 
     @Override
@@ -219,14 +227,22 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
     public void scrollToPosition(int position) {
         if (position < 0 || position > getItemCount() - 1) return;
         mOffsetAll = (int) calculateOffsetForPosition(position);
-        layoutItems(mRecycle, mState, position > mSelectPosition? SCROLL_RIGHT : SCROLL_LEFT);
-        onSelectedCallBack();
+        if (mRecycle == null || mState == null) {//如果RecyclerView还没初始化完，先记录下要滚动的位置
+            mSelectPosition = position;
+        } else {
+            layoutItems(mRecycle, mState, position > mSelectPosition ? SCROLL_RIGHT : SCROLL_LEFT);
+            onSelectedCallBack();
+        }
     }
 
     @Override
     public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
         int finalOffset = (int) calculateOffsetForPosition(position);
-        startScroll(mOffsetAll, finalOffset);
+        if (mRecycle == null || mState == null) {//如果RecyclerView还没初始化完，先记录下要滚动的位置
+            mSelectPosition = position;
+        } else {
+            startScroll(mOffsetAll, finalOffset);
+        }
     }
 
     @Override
@@ -239,6 +255,7 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
         removeAllViews();
         mOffsetAll = 0;
         mSelectPosition = 0;
+        mLastSelectPosition = 0;
         mHasAttachedItems.clear();
         mAllItemFrames.clear();
     }
@@ -366,9 +383,10 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
      */
     private void onSelectedCallBack() {
         mSelectPosition = (int) (mOffsetAll / getIntervalDistance());
-        if (mSelectedListener != null) {
+        if (mSelectedListener != null && mSelectPosition != mLastSelectPosition) {
             mSelectedListener.onItemSelected(mSelectPosition);
         }
+        mLastSelectPosition = mSelectPosition;
     }
 
     /**
