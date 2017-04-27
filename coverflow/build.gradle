@@ -51,7 +51,7 @@ publish {
     userOrg = 'chenlittleping'
     groupId = 'com.chenlittleping'
     artifactId = 'recyclercoverflow'
-    version = '1.0.0'
+    version = '1.0.1'
     description = 'This is a cover flow control extends from recyclerview'
     website = "https://github.com/ChenLittlePing/RecyclerCoverFlow"
 }
