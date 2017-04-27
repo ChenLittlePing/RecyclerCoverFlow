@@ -107,25 +107,25 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
         //计算测量布局的宽高
         mDecoratedChildWidth = getDecoratedMeasuredWidth(scrap);
         mDecoratedChildHeight = getDecoratedMeasuredHeight(scrap);
-        mStartX = (getHorizontalSpace() - mDecoratedChildWidth) / 2;
-        mStartY = (getVerticalSpace() - mDecoratedChildHeight) / 2;
+        mStartX = Math.round((getHorizontalSpace() - mDecoratedChildWidth) * 1.0f / 2);
+        mStartY = Math.round((getVerticalSpace() - mDecoratedChildHeight) *1.0f / 2);
 
-        int offset = mStartX;
+        float offset = mStartX;
         for (int i = 0; i < getItemCount(); i++) { //存储所有item具体位置
             Rect frame = mAllItemFrames.get(i);
             if (frame == null) {
                 frame = new Rect();
             }
-            frame.set(offset, mStartY, offset + mDecoratedChildWidth, mStartY + mDecoratedChildHeight);
+            frame.set(Math.round(offset), mStartY, Math.round(offset + mDecoratedChildWidth), mStartY + mDecoratedChildHeight);
             mAllItemFrames.put(i, frame);
             mHasAttachedItems.put(i, false);
-            offset += getIntervalDistance();
+            offset = offset + getIntervalDistance(); //原始位置累加，否则越后面误差越大
         }
 
         detachAndScrapAttachedViews(recycler); //在布局之前，将所有的子View先Detach掉，放入到Scrap缓存中
         if ((mRecycle == null || mState == null) && //在为初始化前调用smoothScrollToPosition 或者 scrollToPosition,只会记录位置
                 mSelectPosition != 0) {                 //所以初始化时需要滚动到对应位置
-            mOffsetAll = (int) calculateOffsetForPosition(mSelectPosition);
+            mOffsetAll = calculateOffsetForPosition(mSelectPosition);
             onSelectedCallBack();
         }
 
@@ -227,7 +227,7 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
     @Override
     public void scrollToPosition(int position) {
         if (position < 0 || position > getItemCount() - 1) return;
-        mOffsetAll = (int) calculateOffsetForPosition(position);
+        mOffsetAll = calculateOffsetForPosition(position);
         if (mRecycle == null || mState == null) {//如果RecyclerView还没初始化完，先记录下要滚动的位置
             mSelectPosition = position;
         } else {
@@ -238,7 +238,7 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
 
     @Override
     public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
-        int finalOffset = (int) calculateOffsetForPosition(position);
+        int finalOffset = calculateOffsetForPosition(position);
         if (mRecycle == null || mState == null) {//如果RecyclerView还没初始化完，先记录下要滚动的位置
             mSelectPosition = position;
         } else {
@@ -310,22 +310,22 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
      * 计算Item所在的位置偏移
      * @param position 要计算Item位置
      */
-    private float calculateOffsetForPosition(int position) {
-        return getIntervalDistance() * position;
+    private int calculateOffsetForPosition(int position) {
+        return Math.round(getIntervalDistance() * position);
     }
 
     /**
      * 修正停止滚动后，Item滚动到中间位置
      */
     private void fixOffsetWhenFinishScroll() {
-        int scrollN = (int) (mOffsetAll / getIntervalDistance());
+        int scrollN = (int) (mOffsetAll * 1.0f / getIntervalDistance());
         float moreDx = (mOffsetAll % getIntervalDistance());
         if (moreDx > (getIntervalDistance() * 0.5)) {
             scrollN ++;
         }
         int finalOffset = (int) (scrollN * getIntervalDistance());
         startScroll(mOffsetAll, finalOffset);
-        mSelectPosition = (int) (finalOffset / getIntervalDistance());
+        mSelectPosition = Math.round (finalOffset * 1.0f / getIntervalDistance());
     }
 
     /**
@@ -383,7 +383,7 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
      * 计算当前选中位置，并回调
      */
     private void onSelectedCallBack() {
-        mSelectPosition = (int) (mOffsetAll / getIntervalDistance());
+        mSelectPosition = Math.round (mOffsetAll / getIntervalDistance());
         if (mSelectedListener != null && mSelectPosition != mLastSelectPosition) {
             mSelectedListener.onItemSelected(mSelectPosition);
         }
