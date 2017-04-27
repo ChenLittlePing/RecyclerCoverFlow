@@ -108,6 +108,7 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
         mDecoratedChildWidth = getDecoratedMeasuredWidth(scrap);
         mDecoratedChildHeight = getDecoratedMeasuredHeight(scrap);
         mStartX = (getHorizontalSpace() - mDecoratedChildWidth) / 2;
+        mStartY = (getVerticalSpace() - mDecoratedChildHeight) / 2;
 
         int offset = mStartX;
         for (int i = 0; i < getItemCount(); i++) { //存储所有item具体位置
@@ -115,7 +116,7 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
             if (frame == null) {
                 frame = new Rect();
             }
-            frame.set(offset, 0, offset + mDecoratedChildWidth, mDecoratedChildHeight);
+            frame.set(offset, mStartY, offset + mDecoratedChildWidth, mStartY + mDecoratedChildHeight);
             mAllItemFrames.put(i, frame);
             mHasAttachedItems.put(i, false);
             offset += getIntervalDistance();
