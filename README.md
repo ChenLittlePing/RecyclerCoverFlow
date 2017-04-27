@@ -3,7 +3,7 @@
 
 ![image](https://github.com/ChenLittlePing/RecyclerCoverFlow/blob/master/gif/demo.gif)
 
-<p>Gradle依赖 compile 'com.chenlittleping:recyclercoverflow:1.0.1'
+<p>Gradle依赖 compile 'com.chenlittleping:recyclercoverflow:1.0.3'
 
 # 使用方式
 ### 1,xml中加入
