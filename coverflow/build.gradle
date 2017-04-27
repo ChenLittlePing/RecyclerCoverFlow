@@ -30,10 +30,10 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.2.0'
+    compile 'com.android.support:appcompat-v7:25.0.0'
     testCompile 'junit:junit:4.12'
 
-    compile 'com.android.support:recyclerview-v7:25.2.0'
+    compile 'com.android.support:recyclerview-v7:25.0.0'
 }
 
 /** 以下开始是将Android Library上传到jcenter的相关配置**/
@@ -51,7 +51,7 @@ publish {
     userOrg = 'chenlittleping'
     groupId = 'com.chenlittleping'
     artifactId = 'recyclercoverflow'
-    version = '1.0.2'
+    version = '1.0.3'
     description = 'This is a cover flow control extends from recyclerview'
     website = "https://github.com/ChenLittlePing/RecyclerCoverFlow"
 }
