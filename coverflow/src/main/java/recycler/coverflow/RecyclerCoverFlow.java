@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 
 /**
  * 继承RecyclerView重写{@link #getChildDrawingOrder(int, int)}对Item的绘制顺序进行控制
@@ -14,6 +15,10 @@ import android.util.AttributeSet;
  */
 
 public class RecyclerCoverFlow extends RecyclerView {
+    /**
+     * 按下的X轴坐标
+     */
+    private float mDownX;
 
     public RecyclerCoverFlow(Context context) {
         super(context);
@@ -89,5 +94,27 @@ public class RecyclerCoverFlow extends RecyclerView {
      */
     public void setOnItemSelectedListener(CoverFlowLayoutManger.OnSelected l) {
         getCoverFlowLayout().setOnSelectedListener(l);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent e) {
+        getParent().requestDisallowInterceptTouchEvent(true); //设置父类不拦截滑动事件
+        switch (e.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                mDownX = e.getX();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                if ((e.getX() > mDownX && getCoverFlowLayout().getCenterPosition() == 0) ||
+                    (e.getX() < mDownX && getCoverFlowLayout().getCenterPosition() ==
+                                    getCoverFlowLayout().getItemCount() -1)) {
+                    //如果是滑动到了最前和最后，开放父类滑动事件拦截
+                    getParent().requestDisallowInterceptTouchEvent(false);
+                } else {
+                    //滑动到中间，设置父类不拦截滑动事件
+                    getParent().requestDisallowInterceptTouchEvent(true);
+                }
+                break;
+        }
+        return super.onTouchEvent(e);
     }
 }

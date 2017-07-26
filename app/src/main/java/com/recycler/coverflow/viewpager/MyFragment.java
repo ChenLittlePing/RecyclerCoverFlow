@@ -1,0 +1,58 @@
+package com.recycler.coverflow.viewpager;
+
+import android.content.Context;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.recycler.coverflow.Adapter;
+import com.recycler.coverflow.R;
+
+import recycler.coverflow.CoverFlowLayoutManger;
+import recycler.coverflow.RecyclerCoverFlow;
+
+/**
+ *
+ * @author Chen Xiaoping (562818444@qq.com)
+ * @version RecyclerCoverFlow
+ * @Datetime 2017-07-26 15:11
+ * @since RecyclerCoverFlow
+ */
+
+public class MyFragment extends Fragment {
+    private RecyclerCoverFlow mList;
+    private TextView mIndex;
+    private Context mContext;
+
+
+    public static Fragment newInstance(Context context) {
+        MyFragment fragment = new MyFragment();
+        fragment.mContext = context;
+        return fragment;
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment, container, false);
+        initList(rootView);
+        return rootView;
+    }
+
+    private void initList(View rootView) {
+        mList = (RecyclerCoverFlow) rootView.findViewById(R.id.list);
+        mIndex = ((TextView)rootView.findViewById(R.id.index));
+//        mList.setFlatFlow(true); //平面滚动
+        mList.setAdapter(new Adapter(mContext));
+        mList.setOnItemSelectedListener(new CoverFlowLayoutManger.OnSelected() {
+            @Override
+            public void onItemSelected(int position) {
+                mIndex.setText((position+1)+"/"+mList.getLayoutManager().getItemCount());
+            }
+        });
+    }
+}
