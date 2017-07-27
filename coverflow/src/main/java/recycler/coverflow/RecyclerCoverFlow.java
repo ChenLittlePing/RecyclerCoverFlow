@@ -20,25 +20,40 @@ public class RecyclerCoverFlow extends RecyclerView {
      */
     private float mDownX;
 
+    /**
+     * 布局器构建者
+     */
+    private CoverFlowLayoutManger.Builder mManagerBuilder;
+
     public RecyclerCoverFlow(Context context) {
         super(context);
-        init(false);
+        init();
     }
 
     public RecyclerCoverFlow(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init(false);
+        init();
     }
 
     public RecyclerCoverFlow(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init(false);
+        init();
     }
 
-    private void init(boolean isFlat) {
-        setLayoutManager(new CoverFlowLayoutManger(isFlat));
+    private void init() {
+        createManageBuilder();
+        setLayoutManager(mManagerBuilder.build());
         setChildrenDrawingOrderEnabled(true); //开启重新排序
         setOverScrollMode(OVER_SCROLL_NEVER);
+    }
+
+    /**
+     * 创建布局构建器
+     */
+    private void createManageBuilder() {
+        if (mManagerBuilder == null) {
+            mManagerBuilder = new CoverFlowLayoutManger.Builder();
+        }
     }
 
     /**
@@ -46,7 +61,29 @@ public class RecyclerCoverFlow extends RecyclerView {
      * @param isFlat true:平面滚动；false:叠加缩放滚动
      */
     public void setFlatFlow(boolean isFlat) {
-        init(isFlat);
+        createManageBuilder();
+        mManagerBuilder.setFlat(isFlat);
+        setLayoutManager(mManagerBuilder.build());
+    }
+
+    /**
+     * 设置Item灰度渐变
+     * @param greyItem true:Item灰度渐变；false:Item灰度不变
+     */
+    public void setGreyItem(boolean greyItem) {
+        createManageBuilder();
+        mManagerBuilder.setGreyItem(greyItem);
+        setLayoutManager(mManagerBuilder.build());
+    }
+
+    /**
+     * 设置Item灰度渐变
+     * @param alphaItem true:Item半透渐变；false:Item透明度不变
+     */
+    public void setAlphaItem(boolean alphaItem) {
+        createManageBuilder();
+        mManagerBuilder.setAlphaItem(alphaItem);
+        setLayoutManager(mManagerBuilder.build());
     }
 
     @Override

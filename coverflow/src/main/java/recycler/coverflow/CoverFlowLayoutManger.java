@@ -2,6 +2,9 @@ package recycler.coverflow;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
@@ -77,8 +80,16 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
     /**是否为平面滚动，Item之间没有叠加，也没有缩放*/
     private boolean mIsFlatFlow = false;
 
-    public CoverFlowLayoutManger(boolean isFlat) {
+    /**是否启动Item灰度值渐变*/
+    private boolean mItemGradualGrey = false;
+
+    /**是否启动Item半透渐变*/
+    private boolean mItemGradualAlpha = false;
+
+    public CoverFlowLayoutManger(boolean isFlat, boolean isGreyItem, boolean isAlphaItem) {
         mIsFlatFlow = isFlat;
+        mItemGradualGrey = isGreyItem;
+        mItemGradualAlpha = isAlphaItem;
         if (mIsFlatFlow) {
             mIntervalRatio = 1.1f;
         }
@@ -205,6 +216,35 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
             child.setScaleX(computeScale(frame.left - mOffsetAll)); //缩放
             child.setScaleY(computeScale(frame.left - mOffsetAll)); //缩放
         }
+
+        if (mItemGradualAlpha) {
+            child.setAlpha(computeAlpha(frame.left - mOffsetAll));
+        }
+
+        if (mItemGradualGrey) {
+            greyItem(child, frame);
+        }
+    }
+
+    /**
+     * 变化Item的灰度值
+     * @param child 需要设置灰度值的Item
+     * @param frame 位置信息
+     */
+    private void greyItem(View child, Rect frame) {
+        float value = computeGreyScale(frame.left - mOffsetAll);
+        if (value < 1) {
+            // Create a paint object with 0 saturation (black and white)
+            ColorMatrix cm = new ColorMatrix();
+            cm.setSaturation(value);
+            Paint greyPaint = new Paint();
+            greyPaint.setColorFilter(new ColorMatrixColorFilter(cm));
+            // Create a hardware layer with the grey paint
+            child.setLayerType(View.LAYER_TYPE_HARDWARE, greyPaint);
+        } else {
+            // Remove the hardware layer
+            child.setLayerType(View.LAYER_TYPE_NONE, null);
+        }
     }
 
     @Override
@@ -292,6 +332,18 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
         if (scale < 0) scale = 0;
         if (scale > 1) scale = 1;
         return scale;
+    }
+
+    /**
+     * 计算Item的灰度值
+     * @param x Item的偏移量
+     * @return 灰度系数
+     */
+    private float computeGreyScale(int x) {
+        float value = 1 - Math.abs(x - mStartX) * 1.0f / mStartX;
+        if (value < 0.2) value = 0.2f;
+        if (value > 1) value = 1;
+        return value;
     }
 
     /**
@@ -460,5 +512,30 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
          * @param position 显示在中间的Item的位置
          */
         void onItemSelected(int position);
+    }
+
+    public static class Builder {
+        boolean isFlat = false;
+        boolean isGreyItem = false;
+        boolean isAlphaItem = false;
+
+        public Builder setFlat(boolean flat) {
+            isFlat = flat;
+            return this;
+        }
+
+        public Builder setGreyItem(boolean greyItem) {
+            isGreyItem = greyItem;
+            return this;
+        }
+
+        public Builder setAlphaItem(boolean alphaItem) {
+            isAlphaItem = alphaItem;
+            return this;
+        }
+
+        public CoverFlowLayoutManger build() {
+            return new CoverFlowLayoutManger(isFlat, isGreyItem, isAlphaItem);
+        }
     }
 }

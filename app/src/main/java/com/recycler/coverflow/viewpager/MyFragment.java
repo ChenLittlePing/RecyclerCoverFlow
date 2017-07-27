@@ -47,6 +47,8 @@ public class MyFragment extends Fragment {
         mList = (RecyclerCoverFlow) rootView.findViewById(R.id.list);
         mIndex = ((TextView)rootView.findViewById(R.id.index));
 //        mList.setFlatFlow(true); //平面滚动
+//        mList.setGreyItem(true); //设置灰度渐变
+//        mList.setAlphaItem(true); //设置灰度渐变
         mList.setAdapter(new Adapter(mContext));
         mList.setOnItemSelectedListener(new CoverFlowLayoutManger.OnSelected() {
             @Override
