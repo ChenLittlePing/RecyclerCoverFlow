@@ -97,16 +97,16 @@ public class RecyclerCoverFlow extends RecyclerView {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent e) {
-        getParent().requestDisallowInterceptTouchEvent(true); //设置父类不拦截滑动事件
-        switch (e.getAction()) {
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                mDownX = e.getX();
+                mDownX = ev.getX();
+                getParent().requestDisallowInterceptTouchEvent(true); //设置父类不拦截滑动事件
                 break;
             case MotionEvent.ACTION_MOVE:
-                if ((e.getX() > mDownX && getCoverFlowLayout().getCenterPosition() == 0) ||
-                    (e.getX() < mDownX && getCoverFlowLayout().getCenterPosition() ==
-                                    getCoverFlowLayout().getItemCount() -1)) {
+                if ((ev.getX() > mDownX && getCoverFlowLayout().getCenterPosition() == 0) ||
+                        (ev.getX() < mDownX && getCoverFlowLayout().getCenterPosition() ==
+                                getCoverFlowLayout().getItemCount() -1)) {
                     //如果是滑动到了最前和最后，开放父类滑动事件拦截
                     getParent().requestDisallowInterceptTouchEvent(false);
                 } else {
@@ -115,6 +115,6 @@ public class RecyclerCoverFlow extends RecyclerView {
                 }
                 break;
         }
-        return super.onTouchEvent(e);
+        return super.dispatchTouchEvent(ev);
     }
 }
