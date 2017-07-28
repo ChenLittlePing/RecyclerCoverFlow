@@ -1,6 +1,5 @@
 package com.recycler.coverflow.viewpager;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -26,12 +25,10 @@ import recycler.coverflow.RecyclerCoverFlow;
 public class MyFragment extends Fragment {
     private RecyclerCoverFlow mList;
     private TextView mIndex;
-    private Context mContext;
 
 
-    public static Fragment newInstance(Context context) {
+    public static Fragment newInstance() {
         MyFragment fragment = new MyFragment();
-        fragment.mContext = context;
         return fragment;
     }
 
@@ -48,8 +45,8 @@ public class MyFragment extends Fragment {
         mIndex = ((TextView)rootView.findViewById(R.id.index));
 //        mList.setFlatFlow(true); //平面滚动
 //        mList.setGreyItem(true); //设置灰度渐变
-//        mList.setAlphaItem(true); //设置灰度渐变
-        mList.setAdapter(new Adapter(mContext));
+//        mList.setAlphaItem(true); //设置半透渐变
+        mList.setAdapter(new Adapter(getActivity()));
         mList.setOnItemSelectedListener(new CoverFlowLayoutManger.OnSelected() {
             @Override
             public void onItemSelected(int position) {

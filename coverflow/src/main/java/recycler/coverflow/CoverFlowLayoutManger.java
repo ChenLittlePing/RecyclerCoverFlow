@@ -233,18 +233,25 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
      */
     private void greyItem(View child, Rect frame) {
         float value = computeGreyScale(frame.left - mOffsetAll);
-        if (value < 1) {
-            // Create a paint object with 0 saturation (black and white)
-            ColorMatrix cm = new ColorMatrix();
-            cm.setSaturation(value);
-            Paint greyPaint = new Paint();
-            greyPaint.setColorFilter(new ColorMatrixColorFilter(cm));
-            // Create a hardware layer with the grey paint
-            child.setLayerType(View.LAYER_TYPE_HARDWARE, greyPaint);
-        } else {
+        ColorMatrix cm = new ColorMatrix(new float[]{
+                value, 0, 0, 0, 120*(1-value),
+                0, value, 0, 0, 120*(1-value),
+                0, 0, value, 0, 120*(1-value),
+                0, 0, 0, 1, 250*(1-value),
+        });
+//            cm.setSaturation(0.9f);
+
+        // Create a paint object with color matrix
+        Paint greyPaint = new Paint();
+        greyPaint.setColorFilter(new ColorMatrixColorFilter(cm));
+
+        // Create a hardware layer with the grey paint
+        child.setLayerType(View.LAYER_TYPE_HARDWARE, greyPaint);
+        if (value >= 1) {
             // Remove the hardware layer
             child.setLayerType(View.LAYER_TYPE_NONE, null);
         }
+
     }
 
     @Override
@@ -341,8 +348,9 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
      */
     private float computeGreyScale(int x) {
         float value = 1 - Math.abs(x - mStartX) * 1.0f / mStartX;
-        if (value < 0.2) value = 0.2f;
+        if (value < 0.1) value = 0.1f;
         if (value > 1) value = 1;
+        value = (float) Math.pow(value,.8);
         return value;
     }
 

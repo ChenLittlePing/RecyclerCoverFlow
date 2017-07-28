@@ -38,10 +38,10 @@ public class ViewpagerActivity extends AppCompatActivity {
     }
 
     private void newFragment() {
-        mFragments.add(MyFragment.newInstance(this));
-        mFragments.add(MyFragment.newInstance(this));
-        mFragments.add(MyFragment.newInstance(this));
-        mFragments.add(MyFragment.newInstance(this));
+        mFragments.add(MyFragment.newInstance());
+        mFragments.add(MyFragment.newInstance());
+        mFragments.add(MyFragment.newInstance());
+        mFragments.add(MyFragment.newInstance());
     }
 
     private void initViewPager() {
