@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <TextView
-        android:id="@+id/index"
-        android:layout_marginTop="40dp"
+    <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:text="0"
-        android:textColor="@android:color/black"/>
-
-    <recycler.coverflow.RecyclerCoverFlow
-        android:id="@+id/list"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="10dp"
+        android:text="只有Cover Flow"
+        android:onClick="onJustCoverFlowClick"/>
+    <Button
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    </recycler.coverflow.RecyclerCoverFlow>
-</android.support.constraint.ConstraintLayout>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="也有View Pager"
+        android:onClick="onViewPagerClick"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="还有Recyvler View"
+        android:onClick="onRecyclerViewClick"/>
+</LinearLayout>

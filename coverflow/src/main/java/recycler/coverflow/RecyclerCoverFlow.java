@@ -86,6 +86,17 @@ public class RecyclerCoverFlow extends RecyclerView {
         setLayoutManager(mManagerBuilder.build());
     }
 
+    /**
+     * 设置Item的间隔比例
+     * @param intervalRatio Item间隔比例。
+     *                      即：item的宽 x intervalRatio
+     */
+    public void setIntervalRatio(float intervalRatio) {
+        createManageBuilder();
+        mManagerBuilder.setIntervalRatio(intervalRatio);
+        setLayoutManager(mManagerBuilder.build());
+    }
+
     @Override
     public void setLayoutManager(LayoutManager layout) {
         if (!(layout instanceof CoverFlowLayoutManger)) {

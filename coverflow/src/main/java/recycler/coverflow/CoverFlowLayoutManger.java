@@ -86,12 +86,17 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
     /**是否启动Item半透渐变*/
     private boolean mItemGradualAlpha = false;
 
-    public CoverFlowLayoutManger(boolean isFlat, boolean isGreyItem, boolean isAlphaItem) {
+    public CoverFlowLayoutManger(boolean isFlat, boolean isGreyItem,
+                                 boolean isAlphaItem, float cstInterval) {
         mIsFlatFlow = isFlat;
         mItemGradualGrey = isGreyItem;
         mItemGradualAlpha = isAlphaItem;
-        if (mIsFlatFlow) {
-            mIntervalRatio = 1.1f;
+        if (cstInterval >= 0) {
+            mIntervalRatio = cstInterval;
+        } else {
+            if (mIsFlatFlow) {
+                mIntervalRatio = 1.1f;
+            }
         }
     }
 
@@ -301,6 +306,8 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
     @Override
     public void onAdapterChanged(RecyclerView.Adapter oldAdapter, RecyclerView.Adapter newAdapter) {
         removeAllViews();
+        mRecycle = null;
+        mState = null;
         mOffsetAll = 0;
         mSelectPosition = 0;
         mLastSelectPosition = 0;
@@ -347,7 +354,9 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
      * @return 灰度系数
      */
     private float computeGreyScale(int x) {
-        float value = 1 - Math.abs(x - mStartX) * 1.0f / mStartX;
+        float itemMidPos = x + mDecoratedChildWidth / 2; //item中点x坐标
+        float itemDx2Mid = Math.abs(itemMidPos - getHorizontalSpace() / 2); //item中点距离控件中点距离
+        float value = 1 - itemDx2Mid * 1.0f / (getHorizontalSpace() /2);
         if (value < 0.1) value = 0.1f;
         if (value > 1) value = 1;
         value = (float) Math.pow(value,.8);
@@ -526,6 +535,7 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
         boolean isFlat = false;
         boolean isGreyItem = false;
         boolean isAlphaItem = false;
+        float cstIntervalRatio = -1f;
 
         public Builder setFlat(boolean flat) {
             isFlat = flat;
@@ -542,8 +552,14 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
             return this;
         }
 
+        public Builder setIntervalRatio(float ratio) {
+            cstIntervalRatio = ratio;
+            return this;
+        }
+
         public CoverFlowLayoutManger build() {
-            return new CoverFlowLayoutManger(isFlat, isGreyItem, isAlphaItem);
+            return new CoverFlowLayoutManger(isFlat, isGreyItem,
+                    isAlphaItem, cstIntervalRatio);
         }
     }
 }
