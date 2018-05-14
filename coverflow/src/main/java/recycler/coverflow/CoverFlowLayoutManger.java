@@ -27,6 +27,12 @@ import android.view.animation.DecelerateInterpolator;
 
 public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
 
+    /**
+     * 最大存储item信息存储数量，
+     * 超过设置数量，则动态计算来获取
+     */
+    private final int MAX_RECT_COUNT = 100;
+
     /**滑动总偏移量*/
     private int mOffsetAll = 0;
 
@@ -127,7 +133,9 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
         mStartY = Math.round((getVerticalSpace() - mDecoratedChildHeight) *1.0f / 2);
 
         float offset = mStartX;
-        for (int i = 0; i < getItemCount(); i++) { //存储所有item具体位置
+
+        /**只存{@link MAX_RECT_COUNT}个item具体位置*/
+        for (int i = 0; i < getItemCount() && i < MAX_RECT_COUNT; i++) {
             Rect frame = mAllItemFrames.get(i);
             if (frame == null) {
                 frame = new Rect();
@@ -177,22 +185,29 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
 
         Rect displayFrame = new Rect(mOffsetAll, 0, mOffsetAll + getHorizontalSpace(), getVerticalSpace());
 
+        int position = 0;
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
-            int position = getPosition(child);
+            position = getPosition(child);
 
-            if (!Rect.intersects(displayFrame, mAllItemFrames.get(position))) {//Item没有在显示区域，就说明需要回收
+            Rect rect = getFrame(position);
+            if (!Rect.intersects(displayFrame, rect)) {//Item没有在显示区域，就说明需要回收
                 removeAndRecycleView(child, recycler); //回收滑出屏幕的View
-                mHasAttachedItems.put(position, false);
+                mHasAttachedItems.delete(position);
             } else { //Item还在显示区域内，更新滑动后Item的位置
-                layoutItem(child, mAllItemFrames.get(position)); //更新Item位置
+                layoutItem(child, rect); //更新Item位置
                 mHasAttachedItems.put(position, true);
             }
         }
+        if (position == 0) position = mSelectPosition;
 
-        for (int i = 0; i < getItemCount(); i++) {
-            if (Rect.intersects(displayFrame, mAllItemFrames.get(i)) &&
-                    !mHasAttachedItems.get(i)) { //重新加载可见范围内的Item
+        int min = position - 50 >= 0? position - 50 : 0;
+        int max = position + 50 < getItemCount() ? position + 50 : getItemCount();
+
+        for (int i = min; i < max; i++) {
+            Rect rect = getFrame(i);
+            if (Rect.intersects(displayFrame, rect) &&
+                !mHasAttachedItems.get(i)) { //重新加载可见范围内的Item
                 View scrap = recycler.getViewForPosition(i);
                 measureChildWithMargins(scrap, 0, 0);
                 if (scrollDirection == SCROLL_LEFT || mIsFlatFlow) { //向左滚动，新增的Item需要添加在最前面
@@ -200,7 +215,7 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
                 } else { //向右滚动，新增的item要添加在最后面
                     addView(scrap);
                 }
-                layoutItem(scrap, mAllItemFrames.get(i)); //将这个Item布局出来
+                layoutItem(scrap, rect); //将这个Item布局出来
                 mHasAttachedItems.put(i, true);
             }
         }
@@ -229,6 +244,22 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
         if (mItemGradualGrey) {
             greyItem(child, frame);
         }
+    }
+
+    /**
+     * 动态获取Item的位置信息
+     * @param index item位置
+     * @return item的Rect信息
+     */
+    private Rect getFrame(int index) {
+        Rect frame = mAllItemFrames.get(index);
+        if (frame == null) {
+            frame = new Rect();
+            float offset = mStartX + getIntervalDistance() * index; //原始位置累加（即累计间隔距离）
+            frame.set(Math.round(offset), mStartY, Math.round(offset + mDecoratedChildWidth), mStartY + mDecoratedChildHeight);
+        }
+
+        return frame;
     }
 
     /**
@@ -464,12 +495,15 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
      * <p>Note:该Item为绘制在可见区域的第一个Item，有可能被第二个Item遮挡
      */
     public int getFirstVisiblePosition() {
-        int pos = 0;
-        for (int i = 0; i < mHasAttachedItems.size(); i++) {
-            if (!mHasAttachedItems.get(i)) pos++;
-            else break;
+        Rect displayFrame = new Rect(mOffsetAll, 0, mOffsetAll + getHorizontalSpace(), getVerticalSpace());
+        int cur = getCenterPosition();
+        for (int i = cur - 1; i >= 0; i--) {
+            Rect rect = getFrame(i);
+            if (!Rect.intersects(displayFrame, rect)) {
+                return i + 1;
+            }
         }
-        return pos;
+        return 0;
     }
 
     /**
@@ -477,12 +511,15 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
      * <p>Note:该Item为绘制在可见区域的最后一个Item，有可能被倒数第二个Item遮挡
      */
     public int getLastVisiblePosition() {
-        int pos = mHasAttachedItems.size() - 1;
-        for (int i = mHasAttachedItems.size() - 1; i > 0; i--) {
-            if (!mHasAttachedItems.get(i)) pos--;
-            else break;
+        Rect displayFrame = new Rect(mOffsetAll, 0, mOffsetAll + getHorizontalSpace(), getVerticalSpace());
+        int cur = getCenterPosition();
+        for (int i = cur + 1; i < getItemCount(); i++) {
+            Rect rect = getFrame(i);
+            if (!Rect.intersects(displayFrame, rect)) {
+                return i - 1;
+            }
         }
-        return pos;
+        return cur;
     }
 
     /**

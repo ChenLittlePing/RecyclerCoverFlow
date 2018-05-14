@@ -12,16 +12,6 @@ import com.recycler.coverflow.R;
 import recycler.coverflow.CoverFlowLayoutManger;
 import recycler.coverflow.RecyclerCoverFlow;
 
-/**
- * FIXME
- *
- * @author Chen Xiaoping (562818444@qq.com)
- * @version RecyclerCoverFlow
- * @Datetime 2017-08-05 10:57
- * @Copyright (c) 2017 中国邮政电子商务运营中心. All rights reserved
- * @since RecyclerCoverFlow
- */
-
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     private final int TYPE_COVER_FLOW = 1;

@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -20,8 +19,19 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     private int[] mColors = {R.mipmap.item1,R.mipmap.item2,R.mipmap.item3,R.mipmap.item4,
             R.mipmap.item5,R.mipmap.item6};
 
+    private onItemClick clickCb;
+
     public Adapter(Context c) {
         mContext = c;
+    }
+
+    public Adapter(Context c, onItemClick cb) {
+        mContext = c;
+        clickCb = cb;
+    }
+
+    public void setOnClickLstn(onItemClick cb) {
+        this.clickCb = cb;
     }
 
     @Override
@@ -37,14 +47,17 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, "点击了："+position, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(mContext, "点击了："+position, Toast.LENGTH_SHORT).show();
+                if (clickCb != null) {
+                    clickCb.clickItem(position);
+                }
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return 50;
+        return Integer.MAX_VALUE;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -53,5 +66,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             super(itemView);
             img = (ImageView) itemView.findViewById(R.id.img);
         }
+    }
+
+    interface onItemClick {
+        void clickItem(int pos);
     }
 }
