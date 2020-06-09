@@ -3,10 +3,12 @@
 
 ![image](https://github.com/ChenLittlePing/RecyclerCoverFlow/blob/master/gif/demo.gif)
 
-<b>Gradle依赖</b><br>
- `compile 'com.chenlittleping:recyclercoverflow:1.0.5'`
+## Gradle依赖
+请查看最新版本：[Release](https://github.com/ChenLittlePing/RecyclerCoverFlow/releases)
 
-# 使用方式
+如：`compile 'com.chenlittleping:recyclercoverflow:1.0.6'`
+
+## 使用方式
 ### 1,xml中加入
 ```xml
     <recycler.coverflow.RecyclerCoverFlow
@@ -27,3 +29,7 @@
         }
     });
 ```
+
+## 实现原理：
+
+https://www.jianshu.com/p/1837a801e599
