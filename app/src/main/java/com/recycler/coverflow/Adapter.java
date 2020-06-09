@@ -42,8 +42,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        Glide.with(mContext).load(mColors[position % mColors.length])
-                .into(holder.img);
+        Glide.with(mContext).load(mColors[position]).into(holder.img);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -57,14 +56,14 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return Integer.MAX_VALUE;
+        return mColors.length;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
         ImageView img;
         public ViewHolder(View itemView) {
             super(itemView);
-            img = (ImageView) itemView.findViewById(R.id.img);
+            img = itemView.findViewById(R.id.img);
         }
     }
 

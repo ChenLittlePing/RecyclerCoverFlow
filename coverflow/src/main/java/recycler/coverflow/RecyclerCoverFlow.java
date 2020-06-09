@@ -86,6 +86,12 @@ public class RecyclerCoverFlow extends RecyclerView {
         setLayoutManager(mManagerBuilder.build());
     }
 
+    public void setLoop() {
+        createManageBuilder();
+        mManagerBuilder.loop();
+        setLayoutManager(mManagerBuilder.build());
+    }
+
     /**
      * 设置Item的间隔比例
      * @param intervalRatio Item间隔比例。
@@ -107,18 +113,22 @@ public class RecyclerCoverFlow extends RecyclerView {
 
     @Override
     protected int getChildDrawingOrder(int childCount, int i) {
-        int center = getCoverFlowLayout().getCenterPosition()
-                - getCoverFlowLayout().getFirstVisiblePosition(); //计算正在显示的所有Item的中间位置
-        if (center < 0) center = 0;
-        else if (center > childCount) center = childCount;
+        int center = getCoverFlowLayout().getCenterPosition();
+        // 获取 RecyclerView 中第 i 个 子 view 的实际位置
+        int actualPos = getCoverFlowLayout().getChildActualPos(i);
+
+        // 距离中间item的间隔数
+        int dist = actualPos - center;
         int order;
-        if (i == center) {
-            order = childCount - 1;
-        } else if (i > center) {
-            order = center + childCount - 1 - i;
-        } else {
+        if (dist < 0) { // [< 0] 说明 item 位于中间 item 左边，按循序绘制即可
             order = i;
+        } else { // [>= 0] 说明 item 位于中间 item 右边，需要将顺序颠倒绘制
+            order = childCount - 1 - dist;
         }
+
+        if (order < 0) order = 0;
+        else if (order > childCount -1) order = childCount - 1;
+
         return order;
     }
 

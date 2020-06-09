@@ -19,10 +19,11 @@ public class JustCoverFlowActivity extends AppCompatActivity implements Adapter.
     }
 
     private void initList() {
-        mList = (RecyclerCoverFlow) findViewById(R.id.list);
+        mList = findViewById(R.id.list);
 //        mList.setFlatFlow(true); //平面滚动
 //        mList.setGreyItem(true); //设置灰度渐变
 //        mList.setAlphaItem(true); //设置半透渐变
+        mList.setLoop(); //循环滚动，注：循环滚动模式暂不支持平滑滚动
         mList.setAdapter(new Adapter(this, this));
         mList.setOnItemSelectedListener(new CoverFlowLayoutManger.OnSelected() {
             @Override
