@@ -20,14 +20,17 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             R.mipmap.item5,R.mipmap.item6};
 
     private onItemClick clickCb;
+    private boolean is3D;
 
-    public Adapter(Context c) {
+    public Adapter(Context c, boolean is3D) {
         mContext = c;
+        this.is3D = is3D;
     }
 
-    public Adapter(Context c, onItemClick cb) {
+    public Adapter(Context c, onItemClick cb, boolean is3D) {
         mContext = c;
         clickCb = cb;
+        this.is3D = is3D;
     }
 
     public void setOnClickLstn(onItemClick cb) {
@@ -36,7 +39,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(mContext).inflate(R.layout.layout_item, parent, false);
+        int layout = R.layout.layout_item;
+        if (is3D) layout = R.layout.layout_item_mirror;
+        View v = LayoutInflater.from(mContext).inflate(layout, parent, false);
         return new ViewHolder(v);
     }
 

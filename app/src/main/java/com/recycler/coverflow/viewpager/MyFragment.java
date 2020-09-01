@@ -46,7 +46,7 @@ public class MyFragment extends Fragment {
 //        mList.setFlatFlow(true); //平面滚动
         mList.setGreyItem(true); //设置灰度渐变
 //        mList.setAlphaItem(true); //设置半透渐变
-        mList.setAdapter(new Adapter(getActivity()));
+        mList.setAdapter(new Adapter(getActivity(), false));
         mList.setOnItemSelectedListener(new CoverFlowLayoutManger.OnSelected() {
             @Override
             public void onItemSelected(int position) {

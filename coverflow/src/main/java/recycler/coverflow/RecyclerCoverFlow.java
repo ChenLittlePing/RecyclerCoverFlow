@@ -86,9 +86,22 @@ public class RecyclerCoverFlow extends RecyclerView {
         setLayoutManager(mManagerBuilder.build());
     }
 
+    /**
+     * 设置无限循环滚动
+     */
     public void setLoop() {
         createManageBuilder();
         mManagerBuilder.loop();
+        setLayoutManager(mManagerBuilder.build());
+    }
+
+    /**
+     * 设置Item 3D 倾斜
+     * @param d3 true：Item 3d 倾斜；false：Item 正常摆放
+     */
+    public void set3DItem(boolean d3) {
+        createManageBuilder();
+        mManagerBuilder.set3DItem(d3);
         setLayoutManager(mManagerBuilder.build());
     }
 

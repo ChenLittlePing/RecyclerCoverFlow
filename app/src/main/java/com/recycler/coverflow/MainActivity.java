@@ -31,4 +31,9 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void on3DCoverFlowClick(View view) {
+        Intent intent = new Intent(this, CoverFlow3DActivity.class);
+        startActivity(intent);
+    }
+
 }

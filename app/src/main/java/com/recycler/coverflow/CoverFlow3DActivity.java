@@ -7,7 +7,15 @@ import android.widget.TextView;
 import recycler.coverflow.CoverFlowLayoutManger;
 import recycler.coverflow.RecyclerCoverFlow;
 
-public class JustCoverFlowActivity extends AppCompatActivity implements Adapter.onItemClick {
+/**
+ * 3D 旋转
+ *
+ * @author Chen Xiaoping (562818444@qq.com)
+ * @version RecyclerCoverFlow
+ * @Datetime 2020-09-01 09:21
+ * @since RecyclerCoverFlow
+ */
+public class CoverFlow3DActivity extends AppCompatActivity implements Adapter.onItemClick {
 
     private RecyclerCoverFlow mList;
 
@@ -20,11 +28,9 @@ public class JustCoverFlowActivity extends AppCompatActivity implements Adapter.
 
     private void initList() {
         mList = findViewById(R.id.list);
-//        mList.setFlatFlow(true); //平面滚动
-//        mList.setGreyItem(true); //设置灰度渐变
-//        mList.setAlphaItem(true); //设置半透渐变
-        mList.setLoop(); //循环滚动，注：循环滚动模式暂不支持平滑滚动
-        mList.setAdapter(new Adapter(this, this, false));
+        mList.set3DItem(true); //3D 滚动
+        mList.setLoop(); //循环滚动
+        mList.setAdapter(new Adapter(this, this, true));
         mList.setOnItemSelectedListener(new CoverFlowLayoutManger.OnSelected() {
             @Override
             public void onItemSelected(int position) {

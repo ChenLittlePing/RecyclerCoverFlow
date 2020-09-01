@@ -95,12 +95,18 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
     /**是否无限循环*/
     private boolean mIsLoop = false;
 
+    /**是否启动Item 3D 倾斜*/
+    private boolean mItem3D = false;
+
+
     private CoverFlowLayoutManger(boolean isFlat, boolean isGreyItem,
-                                  boolean isAlphaItem, float cstInterval, boolean isLoop) {
+                                  boolean isAlphaItem, float cstInterval,
+                                  boolean isLoop, boolean is3DItem) {
         mIsFlatFlow = isFlat;
         mItemGradualGrey = isGreyItem;
         mItemGradualAlpha = isAlphaItem;
         mIsLoop = isLoop;
+        mItem3D = is3DItem;
         if (cstInterval >= 0) {
             mIntervalRatio = cstInterval;
         } else {
@@ -272,6 +278,10 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
         if (mItemGradualGrey) {
             greyItem(child, frame);
         }
+
+        if (mItem3D) {
+            item3D(child, frame);
+        }
     }
 
     /**
@@ -316,6 +326,14 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
             child.setLayerType(View.LAYER_TYPE_NONE, null);
         }
 
+    }
+
+    private void item3D(View child, Rect frame) {
+        float center = (frame.left + frame.right - 2*mOffsetAll) / 2f;
+        float value = (center  - (mStartX + mDecoratedChildWidth/2f)) * 1f / (getItemCount() * getIntervalDistance());
+        value = (float) Math.sqrt(Math.abs(value));
+        float symbol = center > (mStartX + mDecoratedChildWidth/2f)? -1: 1;
+        child.setRotationY(symbol * 50 * value);
     }
 
     @Override
@@ -448,15 +466,17 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
      * 修正停止滚动后，Item滚动到中间位置
      */
     private void fixOffsetWhenFinishScroll() {
-        int scrollN = (int) (mOffsetAll * 1.0f / getIntervalDistance());
-        float moreDx = (mOffsetAll % getIntervalDistance());
-        if (Math.abs(moreDx) > (getIntervalDistance() * 0.5)) {
-            if (moreDx > 0) scrollN ++;
-            else scrollN --;
+        if (getIntervalDistance() != 0) { // 判断非 0 ，否则除 0 会导致异常
+            int scrollN = (int) (mOffsetAll * 1.0f / getIntervalDistance());
+            float moreDx = (mOffsetAll % getIntervalDistance());
+            if (Math.abs(moreDx) > (getIntervalDistance() * 0.5)) {
+                if (moreDx > 0) scrollN ++;
+                else scrollN --;
+            }
+            int finalOffset = scrollN * getIntervalDistance();
+            startScroll(mOffsetAll, finalOffset);
+            mSelectPosition = Math.abs(Math.round(finalOffset * 1.0f / getIntervalDistance())) % getItemCount();
         }
-        int finalOffset = (int) (scrollN * getIntervalDistance());
-        startScroll(mOffsetAll, finalOffset);
-        mSelectPosition = Math.abs(Math.round (finalOffset * 1.0f / getIntervalDistance())) % getItemCount();
     }
 
     /**
@@ -506,8 +526,8 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
     /**
      * 获取Item间隔
      */
-    private float getIntervalDistance() {
-        return mDecoratedChildWidth * mIntervalRatio;
+    private int getIntervalDistance() {
+        return Math.round(mDecoratedChildWidth * mIntervalRatio);
     }
 
     /**
@@ -583,7 +603,7 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
      * 获取可见范围内最大的显示Item个数
      */
     public int getMaxVisibleCount() {
-        int oneSide = (int) ((getHorizontalSpace() - mStartX) / (getIntervalDistance()));
+        int oneSide = (getHorizontalSpace() - mStartX) / (getIntervalDistance());
         return oneSide * 2 + 1;
     }
 
@@ -593,8 +613,8 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
      * <p>如果需要获取被选中的Item位置，调用{@link #getSelectedPos()}
      */
     int getCenterPosition() {
-        int pos = (int) (mOffsetAll / getIntervalDistance());
-        int more = (int) (mOffsetAll % getIntervalDistance());
+        int pos = mOffsetAll / getIntervalDistance();
+        int more = mOffsetAll % getIntervalDistance();
         if (Math.abs(more) >= getIntervalDistance() * 0.5f) {
             if (more >= 0) pos++;
             else pos--;
@@ -642,35 +662,41 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
         boolean isAlphaItem = false;
         float cstIntervalRatio = -1f;
         boolean isLoop = false;
+        boolean is3DItem = false;
 
-        public Builder setFlat(boolean flat) {
+        Builder setFlat(boolean flat) {
             isFlat = flat;
             return this;
         }
 
-        public Builder setGreyItem(boolean greyItem) {
+        Builder setGreyItem(boolean greyItem) {
             isGreyItem = greyItem;
             return this;
         }
 
-        public Builder setAlphaItem(boolean alphaItem) {
+        Builder setAlphaItem(boolean alphaItem) {
             isAlphaItem = alphaItem;
             return this;
         }
 
-        public Builder setIntervalRatio(float ratio) {
+        Builder setIntervalRatio(float ratio) {
             cstIntervalRatio = ratio;
             return this;
         }
 
-        public Builder loop() {
+        Builder loop() {
             isLoop = true;
+            return this;
+        }
+
+        Builder set3DItem(boolean d3) {
+            is3DItem = true;
             return this;
         }
 
         public CoverFlowLayoutManger build() {
             return new CoverFlowLayoutManger(isFlat, isGreyItem,
-                    isAlphaItem, cstIntervalRatio, isLoop);
+                    isAlphaItem, cstIntervalRatio, isLoop, is3DItem);
         }
     }
 }
