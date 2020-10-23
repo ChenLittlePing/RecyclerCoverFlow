@@ -134,7 +134,7 @@ public class CoverFlowLayoutManger extends RecyclerView.LayoutManager {
 
         //得到子view的宽和高，这边的item的宽高都是一样的，所以只需要进行一次测量
         View scrap = recycler.getViewForPosition(0);
-        addView(scrap);
+
         measureChildWithMargins(scrap, 0, 0);
         //计算测量布局的宽高
         mDecoratedChildWidth = getDecoratedMeasuredWidth(scrap);
